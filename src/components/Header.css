@@ -1,0 +1,342 @@
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.header-logo img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.header-nav ul {
+    display: flex;
+    gap: 2rem;
+}
+
+.header-nav a {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.header-nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #4CAF50;
+    transition: width 0.3s ease;
+}
+
+.header-nav a:hover::after,
+.header-nav a.active::after {
+    width: 100%;
+}
+
+.header-auth {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.welcome-user {
+    font-weight: 500;
+    color: #333;
+}
+
+.auth-button {
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.auth-button.login {
+    background-color: transparent;
+    border: 1px solid #ddd;
+    color: #555;
+}
+
+.auth-button.login:hover {
+    background-color: #f0f2f5;
+}
+
+.auth-button.signup {
+    background-color: #4CAF50;
+    color: #fff;
+    border: 1px solid #4CAF50;
+}
+
+.auth-button.signup:hover {
+    background-color: #45a049;
+    border-color: #45a049;
+}
+
+.auth-button.logout {
+    background-color: #dc3545;
+    color: #fff;
+    border: 1px solid #dc3545;
+}
+
+.auth-button.logout:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* Tools Dropdown Styles */
+.tools-dropdown {
+  position: relative;
+}
+
+.tools-dropdown-btn {
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  transition: color 0.2s;
+  font-family: inherit;
+  outline: none;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.tools-dropdown-btn:focus,
+.tools-dropdown-btn:hover {
+  color: #007bff;
+}
+
+.tools-dropdown > .tools-dropdown-btn {
+  border-bottom: 2px solid transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.header-nav ul > .tools-dropdown {
+  margin: 0;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  border-radius: 0.5rem;
+  min-width: 180px;
+  z-index: 100;
+  padding: 0.5rem 0;
+}
+
+.tools-dropdown:hover .dropdown-menu,
+.tools-dropdown:focus-within .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu li {
+  list-style: none;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 0.75rem 1.25rem;
+  color: #222;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 0.25rem;
+}
+
+.dropdown-menu a:hover {
+  background: #f0f4ff;
+  color: #007bff;
+}
+
+/* Hamburger styles */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 1rem;
+  z-index: 1100;
+}
+.hamburger .bar {
+  width: 26px;
+  height: 3px;
+  background: #222;
+  margin: 3px 0;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+@media (max-width: 900px) {
+  .header-nav {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100vw;
+    background: #fff;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    transform: translateY(-120%);
+    transition: transform 0.3s;
+    z-index: 1001;
+    display: flex;
+  }
+  .header-nav.open {
+    transform: translateY(0);
+  }
+  .header-nav ul {
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+  }
+  .header-auth {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    background: #fff;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
+    padding: 1.2rem 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    transform: translateY(120%);
+    transition: transform 0.3s;
+    z-index: 1002;
+    display: flex;
+  }
+  .header-auth.open {
+    transform: translateY(0);
+  }
+  .hamburger {
+    display: flex;
+  }
+  .app-header {
+    flex-wrap: wrap;
+    padding: 1rem 1rem;
+  }
+  .header-logo {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .header-logo img {
+    width: 32px;
+    height: 32px;
+  }
+  .header-logo {
+    font-size: 1rem;
+  }
+  .header-nav ul {
+    gap: 1rem;
+  }
+}
+
+.header-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #007bff;
+  background: #eee;
+  display: block;
+}
+
+.header-avatar-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-block;
+  overflow: hidden;
+  position: relative;
+}
+
+.learn-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.learn-dropdown-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 18px;
+  border-radius: 8px 8px 0 0;
+}
+
+.learn-dropdown-btn:focus,
+.learn-dropdown-btn:hover {
+  background: #e6f0ff;
+  outline: none;
+}
+
+.learn-dropdown .dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  border: 1px solid #bbb;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  min-width: 160px;
+  z-index: 100;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.learn-dropdown .dropdown-menu li {
+  width: 100%;
+}
+
+.learn-dropdown .dropdown-menu li a {
+  display: block;
+  padding: 12px 18px;
+  color: #007bff;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 0 0 8px 8px;
+}
+
+.learn-dropdown .dropdown-menu li a:hover {
+  background: #e6f0ff;
+} 
