@@ -22,6 +22,8 @@ import ChessLearnPage from './pages/ChessLearnPage';
 import AISidebar from './components/AISidebar';
 import './components/AISidebar.css';
 import { FaRobot } from 'react-icons/fa';
+import ComingSoonPage from './pages/ComingSoonPage';
+import ThreeByThreeLevelPage from './pages/ThreeByThreeLevelPage';
 
 function App() {
   const [aiOpen, setAiOpen] = React.useState(false);
@@ -52,6 +54,11 @@ function App() {
                 } 
               />
               <Route path="/learn/cubing" element={<ProtectedRoute><CubingLearnPage /></ProtectedRoute>} />
+              <Route path="/learn/cubing/2x2" element={<ProtectedRoute><ComingSoonPage title="2x2" /></ProtectedRoute>} />
+              <Route path="/learn/cubing/3x3" element={<ProtectedRoute><ComingSoonPage title="3x3" /></ProtectedRoute>} />
+              <Route path="/learn/cubing/4x4" element={<ProtectedRoute><ComingSoonPage title="4x4" /></ProtectedRoute>} />
+              <Route path="/learn/cubing/pyraminx" element={<ProtectedRoute><ComingSoonPage title="Pyraminx" /></ProtectedRoute>} />
+              <Route path="/learn/cubing/3x3/:level" element={<ProtectedRoute><ThreeByThreeLevelPage /></ProtectedRoute>} />
               <Route path="/learn/coding" element={<ProtectedRoute><CodingLearnPage /></ProtectedRoute>} />
               <Route path="/learn/chess" element={<ProtectedRoute><ChessLearnPage /></ProtectedRoute>} />
               <Route 

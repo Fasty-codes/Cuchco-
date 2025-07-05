@@ -32,6 +32,23 @@ const Footer = () => {
                     </form>
                 </div>
             </div>
+            
+            {/* Social Media Icons */}
+            <div className="social-icons">
+                <a href="https://instagram.com/cuchco" target="_blank" rel="noopener noreferrer" className="social-icon instagram">
+                    <i className="fab fa-instagram"></i>
+                </a>
+                <a href="https://linkedin.com/company/cuchco" target="_blank" rel="noopener noreferrer" className="social-icon linkedin">
+                    <i className="fab fa-linkedin"></i>
+                </a>
+                <a href="https://github.com/cuchco" target="_blank" rel="noopener noreferrer" className="social-icon github">
+                    <i className="fab fa-github"></i>
+                </a>
+                <a href="https://youtube.com/@cuchco" target="_blank" rel="noopener noreferrer" className="social-icon youtube">
+                    <i className="fab fa-youtube"></i>
+                </a>
+            </div>
+            
             <div className="footer-bottom">
                 &copy; {new Date().getFullYear()} Cuchco | Designed with passion
             </div>

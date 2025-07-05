@@ -31,6 +31,8 @@ const Header = () => {
 
     const systemAvatars = [RubiksCube1, RubiksCube2, RubiksCube3, RubiksCube4, RubiksCube5, RubiksCube6, RubiksCube7, RubiksCube8, RubiksCube9, RubiksCube10];
 
+    const isMobile = () => window.innerWidth <= 800;
+
     // Close dropdown on click outside
     React.useEffect(() => {
         function handleClickOutside(event) {
@@ -108,19 +110,27 @@ const Header = () => {
                     <li><Link to="/">Home</Link></li>
                     <li
                         className="tools-dropdown"
-                        onMouseEnter={() => setLearnOpen(true)}
-                        onMouseLeave={() => { setLearnOpen(false); setCubingOpen(false); }}
+                        onMouseEnter={() => { if (!isMobile()) setLearnOpen(true); }}
+                        onMouseLeave={() => { if (!isMobile()) { setLearnOpen(false); setCubingOpen(false); } }}
                     >
                         <button
                             className="tools-dropdown-btn"
                             tabIndex={0}
                             aria-haspopup="true"
                             aria-expanded={learnOpen}
-                            onFocus={() => setLearnOpen(true)}
+                            onFocus={() => { if (!isMobile()) setLearnOpen(true); }}
                             onBlur={e => {
                                 if (!e.currentTarget.parentNode.contains(e.relatedTarget)) {
                                     setLearnOpen(false);
                                     setCubingOpen(false);
+                                }
+                            }}
+                            onClick={e => {
+                                if (isMobile()) {
+                                    e.preventDefault();
+                                    setLearnOpen(l => !l);
+                                    setCubingOpen(false);
+                                    setToolsOpen(false);
                                 }
                             }}
                         >
@@ -129,30 +139,37 @@ const Header = () => {
                         <ul className="dropdown-menu" style={{ display: learnOpen ? 'block' : 'none' }}>
                             <li
                                 className="tools-dropdown"
-                                onMouseEnter={() => setCubingOpen(true)}
-                                onMouseLeave={() => setCubingOpen(false)}
-                                style={{ position: 'relative' }}
+                                onMouseEnter={() => { if (!isMobile()) setCubingOpen(true); }}
+                                onMouseLeave={() => { if (!isMobile()) setCubingOpen(false); }}
                             >
-                                <Link to="/learn/cubing" style={{ display: 'inline-block', width: '100%' }}>Cubing ▶</Link>
+                                <Link to="/learn/cubing" style={{ display: 'inline-block', width: '100%' }}
+                                    onClick={e => {
+                                        if (isMobile()) {
+                                            setCubingOpen(c => !c);
+                                            setToolsOpen(false);
+                                            e.preventDefault();
+                                        }
+                                    }}
+                                >Cubing ▶</Link>
                                 <ul
                                     className="dropdown-menu"
                                     style={{
                                         display: cubingOpen ? 'block' : 'none',
-                                        position: 'absolute',
-                                        left: '100%',
-                                        top: 0,
+                                        position: isMobile() ? 'static' : 'absolute',
+                                        left: isMobile() ? '0' : '100%',
+                                        top: isMobile() ? '0' : 0,
                                         minWidth: 140,
                                         zIndex: 100,
                                     }}
                                 >
-                                    <li><button style={{ width: '100%', background: 'none', border: 'none', textAlign: 'left', padding: '8px 16px', cursor: 'pointer' }} onClick={() => alert('Coming soon...')}>2x2</button></li>
-                                    <li><button style={{ width: '100%', background: 'none', border: 'none', textAlign: 'left', padding: '8px 16px', cursor: 'pointer' }} onClick={() => alert('Coming soon...')}>3x3</button></li>
-                                    <li><button style={{ width: '100%', background: 'none', border: 'none', textAlign: 'left', padding: '8px 16px', cursor: 'pointer' }} onClick={() => alert('Coming soon...')}>4x4</button></li>
-                                    <li><button style={{ width: '100%', background: 'none', border: 'none', textAlign: 'left', padding: '8px 16px', cursor: 'pointer' }} onClick={() => alert('Coming soon...')}>Pyraminx</button></li>
+                                    <li><Link to="/learn/cubing/2x2" style={{ width: '100%', display: 'inline-block', padding: '8px 16px' }} onClick={() => { setLearnOpen(false); setCubingOpen(false); }}>2x2</Link></li>
+                                    <li><Link to="/learn/cubing/3x3" style={{ width: '100%', display: 'inline-block', padding: '8px 16px' }} onClick={() => { setLearnOpen(false); setCubingOpen(false); }}>3x3</Link></li>
+                                    <li><Link to="/learn/cubing/4x4" style={{ width: '100%', display: 'inline-block', padding: '8px 16px' }} onClick={() => { setLearnOpen(false); setCubingOpen(false); }}>4x4</Link></li>
+                                    <li><Link to="/learn/cubing/pyraminx" style={{ width: '100%', display: 'inline-block', padding: '8px 16px' }} onClick={() => { setLearnOpen(false); setCubingOpen(false); }}>Pyraminx</Link></li>
                                 </ul>
                             </li>
-                            <li><Link to="/learn/coding">Coding</Link></li>
-                            <li><Link to="/learn/chess">Chess</Link></li>
+                            <li><Link to="/learn/coding" onClick={() => setLearnOpen(false)}>Coding</Link></li>
+                            <li><Link to="/learn/chess" onClick={() => setLearnOpen(false)}>Chess</Link></li>
                         </ul>
                     </li>
                     <li><Link to="/community">Community</Link></li>
@@ -160,27 +177,35 @@ const Header = () => {
                     <li
                         className="tools-dropdown"
                         ref={dropdownRef}
-                        onMouseEnter={() => setToolsOpen(true)}
-                        onMouseLeave={() => setToolsOpen(false)}
+                        onMouseEnter={() => { if (!isMobile()) setToolsOpen(true); }}
+                        onMouseLeave={() => { if (!isMobile()) setToolsOpen(false); }}
                     >
                         <button
                             className="tools-dropdown-btn"
                             tabIndex={0}
                             aria-haspopup="true"
                             aria-expanded={toolsOpen}
-                            onFocus={() => setToolsOpen(true)}
+                            onFocus={() => { if (!isMobile()) setToolsOpen(true); }}
                             onBlur={e => {
                                 if (!e.currentTarget.parentNode.contains(e.relatedTarget)) {
                                     setToolsOpen(false);
+                                }
+                            }}
+                            onClick={e => {
+                                if (isMobile()) {
+                                    e.preventDefault();
+                                    setToolsOpen(t => !t);
+                                    setLearnOpen(false);
+                                    setCubingOpen(false);
                                 }
                             }}
                         >
                             Tools ▼
                         </button>
                         <ul className="dropdown-menu" style={{ display: toolsOpen ? 'block' : 'none' }}>
-                            <li><Link to="/timer">Timer</Link></li>
-                            <li><Link to="/scramble-gen">Scramble Generator</Link></li>
-                            <li><Link to="/solver-3x3">3x3 Solver</Link></li>
+                            <li><Link to="/timer" onClick={() => setToolsOpen(false)}>Timer</Link></li>
+                            <li><Link to="/scramble-gen" onClick={() => setToolsOpen(false)}>Scramble Generator</Link></li>
+                            <li><Link to="/solver-3x3" onClick={() => setToolsOpen(false)}>3x3 Solver</Link></li>
                         </ul>
                     </li>
                 </ul>

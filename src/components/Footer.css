@@ -72,6 +72,67 @@
     background: #45a049;
 }
 
+/* Social Media Icons */
+.social-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 2rem 0;
+    padding: 0 2rem;
+}
+
+.social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 20px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.social-icon:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.social-icon.instagram {
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+
+.social-icon.instagram:hover {
+    background: linear-gradient(45deg, #e6683c, #dc2743, #cc2366, #bc1888, #f09433);
+}
+
+.social-icon.linkedin {
+    background: #0077b5;
+}
+
+.social-icon.linkedin:hover {
+    background: #005885;
+}
+
+.social-icon.github {
+    background: #6e5494;
+}
+
+.social-icon.github:hover {
+    background: #5a4a7a;
+}
+
+.social-icon.youtube {
+    background: #ff0000;
+}
+
+.social-icon.youtube:hover {
+    background: #cc0000;
+}
+
 .footer-bottom {
     text-align: center;
     padding: 1rem 0;

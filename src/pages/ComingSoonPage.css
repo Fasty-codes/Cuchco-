@@ -1,0 +1,9 @@
+.clickable-link {
+  color: #222;
+  text-decoration: none;
+  transition: color 0.2s, text-decoration 0.2s;
+}
+.clickable-link:hover, .clickable-link:focus {
+  color: #007bff;
+  text-decoration: underline;
+} 
