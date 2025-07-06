@@ -340,7 +340,7 @@ const ComingSoonPage = ({ title }) => {
             <h2 style={{ color: '#007bff', fontSize: 22, marginBottom: 10 }}>Basic PLL</h2>
             <p>Basic PLL (Permutation of the Last Layer) algorithms are used in the CFOP (Fridrich) method for solving the Rubik's Cube, specifically to permute the last layer's pieces.</p>
             <div style={{ textAlign: 'center', margin: '24px 0 32px 0' }}>
-              <img src={basicPllImg} alt="Slice Moves" style={{ maxWidth: 400, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }} />
+              <img src={basicPllImg} alt="Slice Moves" style={{ maxWidth: 500, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }} />
             </div>
           </section>
         </div>
