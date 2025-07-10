@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logo from '../assets/images/Rubiks-cube-1.jpg';
 import './Header.css';
-import { FaCamera } from 'react-icons/fa';
+import { FaCamera, FaLock } from 'react-icons/fa';
 import { supabase } from '../utils/supabaseClient';
 import RubiksCube1 from '../assets/images/Rubiks-cube-1.jpg';
 import RubiksCube2 from '../assets/images/Rubiks-cube-2.jpg';
@@ -17,7 +17,7 @@ import RubiksCube9 from '../assets/images/Rubiks-cube-9.jpg';
 import RubiksCube10 from '../assets/images/Rubiks-cube-10.jpg';
 
 const Header = () => {
-    const { user, logout } = useAuth();
+    const { user, logout, updateUserProfile } = useAuth();
     const [toolsOpen, setToolsOpen] = useState(false);
     const [navOpen, setNavOpen] = useState(false);
     const [avatarModalOpen, setAvatarModalOpen] = useState(false);
@@ -28,6 +28,7 @@ const Header = () => {
     const dropdownRef = useRef(null);
     const [learnOpen, setLearnOpen] = useState(false);
     const [cubingOpen, setCubingOpen] = useState(false);
+    const [shakeDropdown, setShakeDropdown] = useState({});
 
     const systemAvatars = [RubiksCube1, RubiksCube2, RubiksCube3, RubiksCube4, RubiksCube5, RubiksCube6, RubiksCube7, RubiksCube8, RubiksCube9, RubiksCube10];
 
@@ -58,39 +59,116 @@ const Header = () => {
         if (!avatarFile || !user) return;
         setUploading(true);
         setFeedback('');
-        // Upload to Supabase Storage
-        const fileExt = avatarFile.name.split('.').pop();
-        const fileName = `${user.id || user.username}-${Date.now()}.${fileExt}`;
-        const { data: storageData, error: storageError } = await supabase.storage.from('avatars').upload(fileName, avatarFile, { upsert: true });
-        if (storageError) {
-            setFeedback('Upload failed: ' + storageError.message);
+        
+        try {
+            // Upload to Supabase Storage
+            const fileExt = avatarFile.name.split('.').pop();
+            const fileName = `${user.username}-${Date.now()}.${fileExt}`;
+            
+            console.log('Uploading file:', fileName);
+            const { data: storageData, error: storageError } = await supabase.storage.from('avatars').upload(fileName, avatarFile, { upsert: true });
+            
+            if (storageError) {
+                console.error('Storage error:', storageError);
+                setFeedback('Upload failed: ' + storageError.message);
+                setUploading(false);
+                return;
+            }
+            
+            console.log('Upload successful, getting public URL');
+            // Get public URL
+            const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl(fileName);
+            const avatarUrl = publicUrlData.publicUrl;
+            
+            console.log('Avatar URL:', avatarUrl);
+            // Update user profile in localStorage
+            updateUserProfile({ avatar: avatarUrl });
             setUploading(false);
-            return;
+            setAvatarModalOpen(false);
+            window.location.reload(); // Fastest way to reflect everywhere
+        } catch (error) {
+            console.error('Upload error:', error);
+            
+            // Fallback: use data URL if Supabase upload fails
+            if (error.message.includes('fetch') || error.message.includes('network')) {
+                console.log('Network error, trying fallback with data URL...');
+                try {
+                    // Compress the image and use as data URL
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+                    
+                    img.onload = () => {
+                        // Set canvas size to reasonable dimensions (max 150x150)
+                        const maxSize = 150;
+                        let { width, height } = img;
+                        
+                        if (width > height) {
+                            if (width > maxSize) {
+                                height = (height * maxSize) / width;
+                                width = maxSize;
+                            }
+                        } else {
+                            if (height > maxSize) {
+                                width = (width * maxSize) / height;
+                                height = maxSize;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        // Draw and compress the image
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Convert to data URL with compression (0.6 quality for smaller size)
+                        const avatarUrl = canvas.toDataURL('image/jpeg', 0.6);
+                        console.log('Using compressed data URL as fallback');
+                        
+                        // Update user profile in localStorage
+                        updateUserProfile({ avatar: avatarUrl });
+                        setUploading(false);
+                        setAvatarModalOpen(false);
+                        setFeedback('Uploaded (using local storage due to network issues)');
+                        setTimeout(() => setFeedback(''), 3000);
+                        window.location.reload();
+                    };
+                    
+                    img.onerror = () => {
+                        setFeedback('Failed to process image');
+                        setUploading(false);
+                    };
+                    
+                    // Load the image from the file
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        img.src = e.target.result;
+                    };
+                    reader.onerror = () => {
+                        setFeedback('Failed to read file');
+                        setUploading(false);
+                    };
+                    reader.readAsDataURL(avatarFile);
+                } catch (fallbackError) {
+                    console.error('Fallback error:', fallbackError);
+                    setFeedback('Upload failed: ' + error.message);
+                    setUploading(false);
+                }
+            } else {
+                setFeedback('Upload failed: ' + error.message);
+                setUploading(false);
+            }
         }
-        // Get public URL
-        const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl(fileName);
-        const avatarUrl = publicUrlData.publicUrl;
-        // Update user profile in Supabase
-        const { error: updateError } = await supabase.from('users').update({ avatar: avatarUrl }).eq('id', user.id);
-        if (updateError) {
-            setFeedback('Failed to update profile: ' + updateError.message);
-            setUploading(false);
-            return;
-        }
-        window.location.reload(); // Fastest way to reflect everywhere
     };
 
     const handleSystemAvatarSelect = async (avatarUrl) => {
         if (!user) return;
         setUploading(true);
         setFeedback('');
-        // Update user profile in Supabase
-        const { error: updateError } = await supabase.from('users').update({ avatar: avatarUrl }).eq('id', user.id);
-        if (updateError) {
-            setFeedback('Failed to update profile.');
-            setUploading(false);
-            return;
-        }
+        // Update user profile in localStorage
+        updateUserProfile({ avatar: avatarUrl });
+        setUploading(false);
+        setAvatarModalOpen(false);
         window.location.reload();
     };
 
@@ -162,10 +240,34 @@ const Header = () => {
                                         zIndex: 100,
                                     }}
                                 >
-                                    <li><Link to="/learn/cubing/2x2" style={{ width: '100%', display: 'inline-block', padding: '8px 16px' }} onClick={() => { setLearnOpen(false); setCubingOpen(false); }}>2x2</Link></li>
+                                    <li className={shakeDropdown['2x2'] ? 'shake-card' : ''}>
+                                        <span style={{ width: '100%', display: 'inline-block', padding: '8px 16px', cursor: 'pointer' }}
+                                            onClick={e => {
+                                                e.preventDefault();
+                                                setShakeDropdown(prev => ({ ...prev, ['2x2']: true }));
+                                                setTimeout(() => setShakeDropdown(prev => ({ ...prev, ['2x2']: false })), 500);
+                                            }}
+                                        >2x2 <FaLock style={{ marginLeft: 8, color: '#888', fontSize: 16, verticalAlign: 'middle' }} /></span>
+                                    </li>
                                     <li><Link to="/learn/cubing/3x3" style={{ width: '100%', display: 'inline-block', padding: '8px 16px' }} onClick={() => { setLearnOpen(false); setCubingOpen(false); }}>3x3</Link></li>
-                                    <li><Link to="/learn/cubing/4x4" style={{ width: '100%', display: 'inline-block', padding: '8px 16px' }} onClick={() => { setLearnOpen(false); setCubingOpen(false); }}>4x4</Link></li>
-                                    <li><Link to="/learn/cubing/pyraminx" style={{ width: '100%', display: 'inline-block', padding: '8px 16px' }} onClick={() => { setLearnOpen(false); setCubingOpen(false); }}>Pyraminx</Link></li>
+                                    <li className={shakeDropdown['4x4'] ? 'shake-card' : ''}>
+                                        <span style={{ width: '100%', display: 'inline-block', padding: '8px 16px', cursor: 'pointer' }}
+                                            onClick={e => {
+                                                e.preventDefault();
+                                                setShakeDropdown(prev => ({ ...prev, ['4x4']: true }));
+                                                setTimeout(() => setShakeDropdown(prev => ({ ...prev, ['4x4']: false })), 500);
+                                            }}
+                                        >4x4 <FaLock style={{ marginLeft: 8, color: '#888', fontSize: 16, verticalAlign: 'middle' }} /></span>
+                                    </li>
+                                    <li className={shakeDropdown['pyraminx'] ? 'shake-card' : ''}>
+                                        <span style={{ width: '100%', display: 'inline-block', padding: '8px 16px', cursor: 'pointer' }}
+                                            onClick={e => {
+                                                e.preventDefault();
+                                                setShakeDropdown(prev => ({ ...prev, ['pyraminx']: true }));
+                                                setTimeout(() => setShakeDropdown(prev => ({ ...prev, ['pyraminx']: false })), 500);
+                                            }}
+                                        >Pyraminx <FaLock style={{ marginLeft: 8, color: '#888', fontSize: 16, verticalAlign: 'middle' }} /></span>
+                                    </li>
                                 </ul>
                             </li>
                             <li><Link to="/learn/coding" onClick={() => setLearnOpen(false)}>Coding</Link></li>
@@ -204,7 +306,7 @@ const Header = () => {
                         </button>
                         <ul className="dropdown-menu" style={{ display: toolsOpen ? 'block' : 'none' }}>
                             <li><Link to="/timer" onClick={() => setToolsOpen(false)}>Timer</Link></li>
-                            <li><Link to="/scramble-gen" onClick={() => setToolsOpen(false)}>Scramble Generator</Link></li>
+                            <li><Link to="/scramble-gen" onClick={() => setToolsOpen(false)}>Scramble Gen</Link></li>
                             <li><Link to="/solver-3x3" onClick={() => setToolsOpen(false)}>3x3 Solver</Link></li>
                         </ul>
                     </li>
@@ -278,4 +380,24 @@ const Header = () => {
     );
 };
 
-export default Header; 
+export default Header;
+
+// Add shake animation CSS if not present
+if (typeof window !== 'undefined' && !document.getElementById('shake-style')) {
+    const style = document.createElement('style');
+    style.id = 'shake-style';
+    style.innerHTML = `
+        .shake-card {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-8px); }
+            80% { transform: translateX(8px); }
+            100% { transform: translateX(0); }
+        }
+    `;
+    document.head.appendChild(style);
+} 

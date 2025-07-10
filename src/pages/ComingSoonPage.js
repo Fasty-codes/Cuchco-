@@ -11,6 +11,11 @@ import primeMovesImg from '../assets/images/prime-moves.png';
 import basicF2LImg from '../assets/images/basic-f2l.png';
 import basicOLLImg from '../assets/images/basic-oll.png';
 import basicPllImg from '../assets/images/basic-pll.png';
+import twolookOLLImg from '../assets/images/2look-oll.png';
+import twolookPllImg from '../assets/images/2look-pll.png';
+import FullF2LImg from '../assets/images/2look-oll.png';
+import FullOLLImg from '../assets/images/2look-oll.png';
+import FullPLLImg from '../assets/images/2look-oll.png';
 
 const LEVELS = [
   {
@@ -90,6 +95,11 @@ const ComingSoonPage = ({ title }) => {
   const basicF2LRef = useRef(null);
   const basicOLLRef = useRef(null);
   const basicPllRef = useRef(null);
+  const twoLookOLLRef = useRef(null);
+  const twoLookPLLRef = useRef(null);
+  const FullF2lRef = useRef(null);
+  const FullOLLRef = useRef(null);
+  const FullPLLRef = useRef(null);
   const handleScrollTo = (ref) => {
     if (ref && ref.current) {
       ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -248,13 +258,10 @@ const ComingSoonPage = ({ title }) => {
               <button onClick={() => setActiveAlgSub('2-Look')} className="clickable-link" style={{ background: 'none', border: 'none', color: '#222', fontSize: 18, fontWeight: 600, cursor: 'pointer', padding: 0, textAlign: 'left' }}>2-Look</button>
               <ul style={{ listStyle: 'circle', paddingLeft: 24, margin: 0 }}>
                 <li style={{ marginBottom: 8 }}>
-                  <button onClick={() => setActiveAlgSub('2-Look - F2L')} className="clickable-link" style={{ background: 'none', border: 'none', color: '#222', fontSize: 17, cursor: 'pointer', padding: 0, textAlign: 'left' }}>F2L</button>
-                </li>
-                <li style={{ marginBottom: 8 }}>
-                  <button onClick={() => setActiveAlgSub('2-Look - OLL')} className="clickable-link" style={{ background: 'none', border: 'none', color: '#222', fontSize: 17, cursor: 'pointer', padding: 0, textAlign: 'left' }}>OLL</button>
+                  <button onClick={() => handleScrollTo(twoLookOLLRef)} className="clickable-link" style={{ background: 'none', border: 'none', color: '#222', fontSize: 17, cursor: 'pointer', padding: 0, textAlign: 'left' }}>OLL</button>
                 </li>
                 <li>
-                  <button onClick={() => setActiveAlgSub('2-Look - PLL')} className="clickable-link" style={{ background: 'none', border: 'none', color: '#222', fontSize: 17, cursor: 'pointer', padding: 0, textAlign: 'left' }}>PLL</button>
+                  <button onClick={() => handleScrollTo(twoLookPLLRef)} className="clickable-link" style={{ background: 'none', border: 'none', color: '#222', fontSize: 17, cursor: 'pointer', padding: 0, textAlign: 'left' }}>PLL</button>
                 </li>
               </ul>
             </li>
@@ -319,6 +326,7 @@ const ComingSoonPage = ({ title }) => {
             </div>
           </section>
         </div>
+        {/* Basic Algorithms */}
         <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'left' }}>
           <section ref={basicF2LRef} id="basic-f2l" style={{ marginBottom: 48 }}>
             <h2 style={{ color: '#007bff', fontSize: 22, marginBottom: 10 }}>Basic F2L</h2>
@@ -337,6 +345,49 @@ const ComingSoonPage = ({ title }) => {
             </div>
           </section>
           <section ref={basicPllRef} id="basic-pll" style={{ marginBottom: 48 }}>
+            <h2 style={{ color: '#007bff', fontSize: 22, marginBottom: 10 }}>Basic PLL</h2>
+            <p>Basic PLL (Permutation of the Last Layer) algorithms are used in the CFOP (Fridrich) method for solving the Rubik's Cube, specifically to permute the last layer's pieces.</p>
+            <div style={{ textAlign: 'center', margin: '24px 0 32px 0' }}>
+              <img src={basicPllImg} alt="Slice Moves" style={{ maxWidth: 500, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }} />
+            </div>
+          </section>
+        </div>
+        {/* 2-look */}
+        <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'left' }}>
+          <section ref={twoLookOLLRef} id="2-look-oll" style={{ marginBottom: 48 }}>
+            <h2 style={{ color: '#007bff', fontSize: 22, marginBottom: 10 }}>2-Look OLL</h2>
+            <p>A intermediate-friendly method to solve the last layer's orientation in two steps: first orienting the edges (usually to form a cross) and then orienting the corners. It requires learning about 10 algorithms..</p>
+            <div style={{ textAlign: 'center', margin: '24px 0 32px 0' }}>
+              <img src={twolookOLLImg} alt="2-look OLL" style={{ maxWidth: 700, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }} />
+            </div>
+          </section>
+          <section ref={twoLookPLLRef} id="2-look-pll" style={{ marginBottom: 48 }}>
+            <h2 style={{ color: '#007bff', fontSize: 22, marginBottom: 10 }}>2-Look PLL</h2>
+            <p>A simplified method to solve the last layer's position in two steps: first permuting the corners to their correct locations and then permuting the edges. It requires learning only 6 algorithms.</p>
+            <div style={{ textAlign: 'center', margin: '24px 0 32px 0' }}>
+              <img src={twolookPllImg} alt="2-look PLL" style={{ maxWidth: 500, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }} />
+            </div>
+          </section>
+        </div>
+        { /* Full algorithms */}
+        <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'left' }}>
+          <section ref={FullF2lRef} id="basic-f2l" style={{ marginBottom: 48 }}>
+            <h2 style={{ color: '#007bff', fontSize: 22, marginBottom: 10 }}>Basic F2L</h2>
+            <p>The first two layers (F2L) of the Rubik's Cube are solved simultaneously rather than individually, reducing the solve time considerably.</p>
+            <div style={{ textAlign: 'center', margin: '24px 0 32px 0' }}>
+              <img src={basicF2LImg} alt="Basic F2L" style={{ maxWidth: 700, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', marginBottom: 24 }} />
+              <h6 style={{ fontSize: 16, marginBottom: 12, color: '#222', fontWeight: 'normal' }}>i) U R U' R' U' F' U F'</h6>
+              <h6 style={{ fontSize: 16, marginBottom: 12, color: '#222', fontWeight: 'normal' }}>ii) U' L' U L U F U' F' </h6>
+            </div>
+          </section>
+          <section ref={FullOLLRef} id="basic-oll" style={{ marginBottom: 48 }}>
+            <h2 style={{ color: '#007bff', fontSize: 22, marginBottom: 10 }}>Basic OLL</h2>
+            <p>Basic OLL (Orientation of the Last Layer) algorithms are used in the CFOP (Fridrich) method for solving the Rubik's Cube, specifically to orient the last layer's pieces.</p>
+            <div style={{ textAlign: 'center', margin: '24px 0 32px 0' }}>
+              <img src={basicOLLImg} alt="Basic OLL" style={{ maxWidth: 700, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }} />
+            </div>
+          </section>
+          <section ref={FullPLLRef} id="basic-pll" style={{ marginBottom: 48 }}>
             <h2 style={{ color: '#007bff', fontSize: 22, marginBottom: 10 }}>Basic PLL</h2>
             <p>Basic PLL (Permutation of the Last Layer) algorithms are used in the CFOP (Fridrich) method for solving the Rubik's Cube, specifically to permute the last layer's pieces.</p>
             <div style={{ textAlign: 'center', margin: '24px 0 32px 0' }}>

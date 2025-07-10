@@ -19,9 +19,9 @@ import LeaderboardPage from './pages/LeaderboardPage';
 import CubingLearnPage from './pages/CubingLearnPage';
 import CodingLearnPage from './pages/CodingLearnPage';
 import ChessLearnPage from './pages/ChessLearnPage';
+import LearnPage from './pages/LearnPage';
 import AISidebar from './components/AISidebar';
 import './components/AISidebar.css';
-import { FaRobot } from 'react-icons/fa';
 import ComingSoonPage from './pages/ComingSoonPage';
 import ThreeByThreeLevelPage from './pages/ThreeByThreeLevelPage';
 
@@ -38,21 +38,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/onboarding" element={<OnboardingModal />} />
-              <Route 
-                path="/learn" 
-                element={
-                  <ProtectedRoute>
-                    <div style={{ minHeight: '100vh', padding: '2rem 0', background: '#f7f9fb', textAlign: 'center' }}>
-                      <h1 style={{ color: '#007bff', fontSize: 36, marginBottom: 24 }}>Learn</h1>
-                      <div style={{ fontSize: 22, margin: '32px 0' }}>
-                        <a href="/learn/cubing" style={{ margin: '0 18px', color: '#007bff', textDecoration: 'underline' }}>Cubing</a>
-                        <a href="/learn/coding" style={{ margin: '0 18px', color: '#007bff', textDecoration: 'underline' }}>Coding</a>
-                        <a href="/learn/chess" style={{ margin: '0 18px', color: '#007bff', textDecoration: 'underline' }}>Chess</a>
-                      </div>
-                    </div>
-                  </ProtectedRoute>
-                } 
-              />
+              <Route path="/learn" element={<ProtectedRoute><LearnPage /></ProtectedRoute>} />
               <Route path="/learn/cubing" element={<ProtectedRoute><CubingLearnPage /></ProtectedRoute>} />
               <Route path="/learn/cubing/2x2" element={<ProtectedRoute><ComingSoonPage title="2x2" /></ProtectedRoute>} />
               <Route path="/learn/cubing/3x3" element={<ProtectedRoute><ComingSoonPage title="3x3" /></ProtectedRoute>} />
@@ -63,6 +49,14 @@ function App() {
               <Route path="/learn/chess" element={<ProtectedRoute><ChessLearnPage /></ProtectedRoute>} />
               <Route 
                 path="/community" 
+                element={
+                  <ProtectedRoute>
+                    <CommunityPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/community/post/:postId/:slug?" 
                 element={
                   <ProtectedRoute>
                     <CommunityPage />
@@ -88,7 +82,7 @@ function App() {
           <AISidebar open={aiOpen} onClose={() => setAiOpen(false)} />
           {!aiOpen && (
             <button className="ai-fab" onClick={() => setAiOpen(true)} title="Ask Cuchco AI">
-              <FaRobot size={32} />
+              <i className="bx bxs-sparkles ai-fab-sparkle"></i>
             </button>
           )}
         </div>

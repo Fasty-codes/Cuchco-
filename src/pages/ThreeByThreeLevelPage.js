@@ -447,6 +447,448 @@ function BasicContent() {
   );
 }
 
+function IntermediateContent() {
+  const [showModal, setShowModal] = useState(false);
+  const [showVerifying, setShowVerifying] = useState(false);
+  const [showCertificate, setShowCertificate] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [video, setVideo] = useState(null);
+  const [scramble, setScramble] = useState('');
+  const [solveTime, setSolveTime] = useState('');
+  const [stars, setStars] = useState(0);
+  const [certReady, setCertReady] = useState(false);
+  const [userName, setUserName] = useState('');
+  const certRef = React.useRef();
+
+  const handleVideoChange = (e) => {
+    setVideo(e.target.files[0]);
+  };
+  const handleNameChange = (e) => {
+    setUserName(e.target.value);
+  };
+  const handleScrambleChange = (e) => {
+    setScramble(e.target.value);
+  };
+  const handleTimeChange = (e) => {
+    setSolveTime(e.target.value);
+  };
+
+  const verifyVideo = async (videoFile) => {
+    return new Promise((resolve) => {
+      const video = document.createElement('video');
+      video.muted = true;
+      video.playsInline = true;
+      
+      video.onloadedmetadata = () => {
+        // Simulate video analysis - in real implementation, you'd use computer vision
+        // For now, we'll simulate based on video duration and file size
+        const hasCube = videoFile.size > 1000000; // Simulate cube detection
+        const hasTimer = video.duration > 5; // Simulate timer detection
+        
+        if (!hasCube) {
+          resolve({ success: false, message: 'Verification failed! No cube detected in the video.' });
+        } else if (!hasTimer) {
+          resolve({ success: false, message: 'Verification failed! No timer detected in the video.' });
+        } else {
+          resolve({ success: true });
+        }
+      };
+      
+      video.onerror = () => {
+        resolve({ success: false, message: 'Verification failed! Could not load video file.' });
+      };
+      
+      video.src = URL.createObjectURL(videoFile);
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setShowModal(false);
+    setShowVerifying(true);
+    
+    // Verify the video
+    const verificationResult = await verifyVideo(video);
+    
+    // Simulate processing time
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    setShowVerifying(false);
+    
+    if (!verificationResult.success) {
+      setErrorMessage(verificationResult.message);
+      setShowError(true);
+      return;
+    }
+    
+    // Star logic based on time
+    const time = parseFloat(solveTime);
+    let s = 0;
+    if (time <= 70) s = 3;
+    else if (time <= 80) s = 2;
+    else if (time <= 90) s = 1;
+    setStars(s);
+    
+    setShowCertificate(true);
+  };
+
+  const handleDownload = async (type) => {
+    try {
+      console.log('Starting download...', type);
+      if (!certRef.current) {
+        console.error('Certificate ref not found');
+        return;
+      }
+      
+      console.log('Certificate element found, generating canvas...');
+      const canvas = await html2canvas(certRef.current, {
+        backgroundColor: '#f9fafc',
+        scale: 2, // Higher quality
+        useCORS: true,
+        allowTaint: true
+      });
+      
+      console.log('Canvas generated, creating download link...');
+      const link = document.createElement('a');
+      const fileName = `cuchco_certificate_${userName || 'user'}_${Date.now()}.${type}`;
+      link.download = fileName;
+      link.href = canvas.toDataURL(`image/${type}`, 0.9);
+      
+      console.log('Triggering download...');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      console.log('Download completed');
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Download failed. Please try again.');
+    }
+  };
+
+  return (
+    <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', padding: '2rem 1.5rem' }}>
+      <h2 style={{ color: '#007bff', fontSize: 28, marginBottom: 24, textAlign: 'center' }}>Basic Learning</h2>
+      <nav style={{ display: 'flex', justifyContent: 'center', gap: 32, marginBottom: 32 }}>
+        <a href="#white-cross" style={{ color: '#007bff', fontWeight: 600, fontSize: 18, textDecoration: 'none' }}>White Cross</a>
+        <a href="#f2l" style={{ color: '#007bff', fontWeight: 600, fontSize: 18, textDecoration: 'none' }}>F2L</a>
+        <a href="#oll" style={{ color: '#007bff', fontWeight: 600, fontSize: 18, textDecoration: 'none' }}>OLL</a>
+        <a href="#pll" style={{ color: '#007bff', fontWeight: 600, fontSize: 18, textDecoration: 'none' }}>PLL</a>
+      </nav>
+      <section id="white-cross" style={{ marginBottom: 48 }}>
+        <h3 style={{ fontSize: 24, marginBottom: 12 }}>1. White Cross</h3>
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: 280, background: '#f8f9fa', borderRadius: 8, padding: 16 }}>
+            <h4 style={{ fontSize: 19, marginBottom: 10 }}>Malayalam Explanation</h4>
+            <p style={{ color: '#222', fontSize: 18, marginBottom: 12, fontFamily: `'Ballo Chettan 2', 'Anek Malayalam', 'Noto Sans Malayalam', 'Manjari', 'Arial', 'sans-serif'`, lineHeight: 1.7, fontWeight: 500, letterSpacing: '0.01em' }}>വൈറ്റ്ക്രോസ് എന്നത് ക്യൂബിന്റെ വെളുത്ത സൈഡിൽ ഒരു പ്ലസ് (+) രൂപത്തിൽ വെളുത്ത എഡ്ജുകൾ ക്രമീകരിക്കുന്ന ഘട്ടമാണ്. ഇത് തുടക്കക്കാരൻ പഠിക്കേണ്ട ആദ്യപാഠമാണ്.</p>
+            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: 8 }}>
+              <iframe src="https://www.youtube.com/embed/xoNQplp4FQ8?list=PLIxaCw75sZhW7VtgguEhWW-hqDfPy5mhI" title="Malayalam White Cross" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }} allowFullScreen></iframe>
+            </div>
+          </div>
+          <div style={{ flex: 1, minWidth: 280, background: '#f8f9fa', borderRadius: 8, padding: 16 }}>
+            <h4 style={{ fontSize: 19, marginBottom: 10 }}>English Explanation</h4>
+            <p style={{ color: '#444', fontSize: 16, marginBottom: 10 }}>The white cross is the step where you arrange the white edge pieces on the white face in a plus (+) shape. This is the first step every beginner should learn.</p>
+            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: 8 }}>
+              <iframe src="https://www.youtube.com/embed/M-vKaV2NbEo?list=PLqrfspOsG9B9HdFkp01xUh257W1Rz8-fy" title="English White Cross" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }} allowFullScreen></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="f2l" style={{ marginBottom: 48 }}>
+        <h3 style={{ fontSize: 24, marginBottom: 12 }}>2. F2L (First Two Layers)</h3>
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: 280, background: '#f8f9fa', borderRadius: 8, padding: 16 }}>
+            <h4 style={{ fontSize: 19, marginBottom: 10 }}>Malayalam Explanation</h4>
+            <p style={{ color: '#222', fontSize: 18, marginBottom: 12, fontFamily: `'Ballo Chettan 2', 'Anek Malayalam', 'Noto Sans Malayalam', 'Manjari', 'Arial', 'sans-serif'`, lineHeight: 1.7, fontWeight: 500, letterSpacing: '0.01em' }}>F2L എന്നത് ക്യൂബിന്റെ ആദ്യ രണ്ട് ലെയറുകൾ ഒരുമിച്ച് പരിഹരിക്കുന്ന ഘട്ടമാണ്. കോർണറും എഡ്ജും ചേർത്ത് ശരിയായ സ്ഥാനത്ത് ഇടുന്നു.</p>
+            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: 8 }}>
+              <iframe src="https://www.youtube.com/embed/N4M1dPxRVCY" title="Malayalam F2L" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }} allowFullScreen></iframe>
+            </div>
+          </div>
+          <div style={{ flex: 1, minWidth: 280, background: '#f8f9fa', borderRadius: 8, padding: 16 }}>
+            <h4 style={{ fontSize: 19, marginBottom: 10 }}>English Explanation</h4>
+            <p style={{ color: '#444', fontSize: 16, marginBottom: 10 }}>F2L stands for First Two Layers. In this step, you pair up the corner and edge pieces and insert them together to solve the first two layers of the cube.</p>
+            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: 8 }}>
+              <iframe src="https://www.youtube.com/embed/ReOZZHscIGk?list=PLqrfspOsG9B9HdFkp01xUh257W1Rz8-fy" title="English F2L" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }} allowFullScreen></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="oll" style={{ marginBottom: 48 }}>
+        <h3 style={{ fontSize: 24, marginBottom: 12 }}>3. OLL (Orient Last Layer)</h3>
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: 280, background: '#f8f9fa', borderRadius: 8, padding: 16 }}>
+            <h4 style={{ fontSize: 19, marginBottom: 10 }}>Malayalam Explanation</h4>
+            <p style={{ color: '#222', fontSize: 18, marginBottom: 12, fontFamily: `'Ballo Chettan 2', 'Anek Malayalam', 'Noto Sans Malayalam', 'Manjari', 'Arial', 'sans-serif'`, lineHeight: 1.7, fontWeight: 500, letterSpacing: '0.01em' }}>OLL ഘട്ടത്തിൽ ക്യൂബിന്റെ അവസാന ലെയറിലെ എല്ലാ സ്റ്റിക്കറുകളും ശരിയായ നിറത്തിലാക്കുന്നു. ഇതിന് വിവിധ ആൽഗോരിതങ്ങൾ ഉപയോഗിക്കുന്നു.</p>
+            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: 8 }}>
+              <iframe src="https://www.youtube.com/embed/PHpUoOdvv-o?list=PLIxaCw75sZhW7VtgguEhWW-hqDfPy5mhI" title="Malayalam OLL" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }} allowFullScreen></iframe>
+            </div>
+          </div>
+          <div style={{ flex: 1, minWidth: 280, background: '#f8f9fa', borderRadius: 8, padding: 16 }}>
+            <h4 style={{ fontSize: 19, marginBottom: 10 }}>English Explanation</h4>
+            <p style={{ color: '#444', fontSize: 16, marginBottom: 10 }}>OLL stands for Orient Last Layer. In this step, you use algorithms to make all stickers on the last layer the same color (usually yellow). There are 57 different OLL cases, but beginners start with 2-look OLL.</p>
+            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: 8 }}>
+              <iframe src="https://www.youtube.com/embed/6PSBaxlBqRg?list=PLqrfspOsG9B9HdFkp01xUh257W1Rz8-fy" title="English OLL" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }} allowFullScreen></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="pll" style={{ marginBottom: 24 }}>
+        <h3 style={{ fontSize: 24, marginBottom: 12 }}>4. PLL (Permute Last Layer)</h3>
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: 280, background: '#f8f9fa', borderRadius: 8, padding: 16 }}>
+            <h4 style={{ fontSize: 19, marginBottom: 10 }}>Malayalam Explanation</h4>
+            <p style={{ color: '#222', fontSize: 18, marginBottom: 12, fontFamily: `'Ballo Chettan 2', 'Anek Malayalam', 'Noto Sans Malayalam', 'Manjari', 'Arial', 'sans-serif'`, lineHeight: 1.7, fontWeight: 500, letterSpacing: '0.01em' }}>PLL ഘട്ടത്തിൽ അവസാന ലെയറിലെ സ്റ്റിക്കറുകൾ ശരിയായ സ്ഥാനത്തേക്ക് മാറ്റുന്നു. ഇതാണ് ക്യൂബ് പൂർണ്ണമായി പരിഹരിക്കുന്ന അവസാന ഘട്ടം.</p>
+            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: 8 }}>
+              <iframe src="https://www.youtube.com/embed/p9VaTP-XNW8?list=PLIxaCw75sZhW7VtgguEhWW-hqDfPy5mhI" title="Malayalam PLL" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }} allowFullScreen></iframe>
+            </div>
+          </div>
+          <div style={{ flex: 1, minWidth: 280, background: '#f8f9fa', borderRadius: 8, padding: 16 }}>
+            <h4 style={{ fontSize: 19, marginBottom: 10 }}>English Explanation</h4>
+            <p style={{ color: '#444', fontSize: 16, marginBottom: 10 }}>PLL stands for Permute Last Layer. In this final step, you use algorithms to move the last layer pieces into their correct positions, completing the cube. There are 21 different PLL cases, but beginners start with 2-look PLL.</p>
+            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: 8 }}>
+              <iframe src="https://www.youtube.com/embed/ZC9nwou59ow?list=PLqrfspOsG9B9HdFkp01xUh257W1Rz8-fy" title="English PLL" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }} allowFullScreen></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="certification" style={{ marginTop: 48, textAlign: 'center' }}>
+        <h2 style={{ color: '#007bff', fontSize: 24, marginBottom: 16 }}>Get Your Certification!</h2>
+        <button onClick={() => setShowModal(true)} style={{ background: '#007bff', color: '#fff', border: 'none', borderRadius: 8, padding: '0.75rem 2.5rem', fontSize: 20, fontWeight: 600, cursor: 'pointer' }}>Submit Solve for Certificate</button>
+        
+        {/* Upload Modal */}
+        {showModal && (
+          <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+            <div style={{ background: '#fff', borderRadius: 12, padding: 32, minWidth: 320, maxWidth: 400, boxShadow: '0 2px 16px rgba(0,0,0,0.15)' }}>
+              <h3 style={{ marginBottom: 16 }}>Upload Solve Video & Details</h3>
+              <div style={{ color: '#007bff', fontWeight: 500, marginBottom: 12, fontSize: 15, textAlign: 'left' }}>
+                <b>Instructions:</b>
+                <ul style={{ margin: '8px 0 8px 18px', padding: 0, fontSize: 14, color: '#333', textAlign: 'left' }}>
+                  <li>Record a <b>live video</b> of your solve.</li>
+                  <li>Show the <b>scramble</b> clearly at the start.</li>
+                  <li>Show a <b>timer</b> (physical or on-screen) in the video.</li>
+                  <li>Start the timer, solve the cube, and stop the timer in one continuous shot.</li>
+                  <li>Make sure the time and scramble are visible in the video.</li>
+                </ul>
+              </div>
+              <form onSubmit={handleSubmit}>
+                <input type="file" accept="video/*" onChange={handleVideoChange} required style={{ marginBottom: 12 }} /><br />
+                <input type="text" placeholder="Your Name" value={userName} onChange={handleNameChange} required style={{ marginBottom: 12, width: '100%', padding: 6, borderRadius: 6, border: '1px solid #ccc' }} /><br />
+                <input type="text" placeholder="Scramble used" value={scramble} onChange={handleScrambleChange} required style={{ marginBottom: 12, width: '100%', padding: 6, borderRadius: 6, border: '1px solid #ccc' }} /><br />
+                <input type="number" step="0.01" placeholder="Solve Time (seconds)" value={solveTime} onChange={handleTimeChange} required style={{ marginBottom: 12, width: '100%', padding: 6, borderRadius: 6, border: '1px solid #ccc' }} /><br />
+                <button type="submit" style={{ background: '#007bff', color: '#fff', border: 'none', borderRadius: 8, padding: '0.5rem 1.5rem', fontSize: 18, fontWeight: 600, cursor: 'pointer', marginRight: 8 }}>Submit</button>
+                <button type="button" onClick={() => setShowModal(false)} style={{ background: '#bbb', color: '#fff', border: 'none', borderRadius: 8, padding: '0.5rem 1.5rem', fontSize: 18, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Verifying Modal */}
+        {showVerifying && (
+          <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+            <div style={{ background: '#fff', borderRadius: 12, padding: 32, minWidth: 320, maxWidth: 400, boxShadow: '0 2px 16px rgba(0,0,0,0.15)', textAlign: 'center' }}>
+              <div style={{ fontSize: 24, color: '#007bff', marginBottom: 16 }}>Verifying...</div>
+              <div style={{ fontSize: 16, color: '#666', marginBottom: 16 }}>Please wait while we verify your video submission.</div>
+              <div style={{ width: 40, height: 40, border: '4px solid #f3f3f3', borderTop: '4px solid #007bff', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto' }}></div>
+              <style>{`
+                @keyframes spin {
+                  0% { transform: rotate(0deg); }
+                  100% { transform: rotate(360deg); }
+                }
+              `}</style>
+            </div>
+          </div>
+        )}
+
+        {/* Error Modal */}
+        {showError && (
+          <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+            <div style={{ background: '#fff', borderRadius: 12, padding: 32, minWidth: 320, maxWidth: 400, boxShadow: '0 2px 16px rgba(0,0,0,0.15)', textAlign: 'center' }}>
+              <div style={{ fontSize: 24, color: '#dc3545', marginBottom: 16 }}>❌ Verification Failed</div>
+              <div style={{ fontSize: 16, color: '#666', marginBottom: 16 }}>{errorMessage}</div>
+              <div style={{ fontSize: 14, color: '#888', marginBottom: 16 }}>
+                Please ensure your video contains:
+                <ul style={{ textAlign: 'left', margin: '8px 0 8px 20px' }}>
+                  <li>A clear view of the cube</li>
+                  <li>A visible timer</li>
+                  <li>The complete solve process</li>
+                </ul>
+              </div>
+              <button onClick={() => setShowError(false)} style={{ background: '#dc3545', color: '#fff', border: 'none', borderRadius: 8, padding: '0.5rem 1.5rem', fontSize: 16, fontWeight: 600, cursor: 'pointer' }}>Try Again</button>
+            </div>
+          </div>
+        )}
+
+        {/* Certificate Modal */}
+        {showCertificate && (
+          <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+            <div style={{ background: '#fff', borderRadius: 12, padding: 32, minWidth: 500, maxWidth: 600, boxShadow: '0 2px 16px rgba(0,0,0,0.15)', textAlign: 'center' }}>
+              <h3 style={{ marginBottom: 16, color: '#007bff' }}>Your Certificate</h3>
+              <div ref={certRef} style={{ 
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                border: '3px solid #007bff',
+                borderRadius: 16,
+                padding: 20,
+                margin: '0 auto 16px auto',
+                width: 480,
+                height: 320,
+                boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                {/* Decorative corner elements */}
+                <div style={{ 
+                  position: 'absolute', 
+                  top: 0, 
+                  left: 0, 
+                  width: 50, 
+                  height: 50, 
+                  borderTop: '3px solid #fff', 
+                  borderLeft: '3px solid #fff',
+                  borderTopLeftRadius: 16
+                }}></div>
+                <div style={{ 
+                  position: 'absolute', 
+                  top: 0, 
+                  right: 0, 
+                  width: 50, 
+                  height: 50, 
+                  borderTop: '3px solid #fff', 
+                  borderRight: '3px solid #fff',
+                  borderTopRightRadius: 16
+                }}></div>
+                <div style={{ 
+                  position: 'absolute', 
+                  bottom: 0, 
+                  left: 0, 
+                  width: 50, 
+                  height: 50, 
+                  borderBottom: '3px solid #fff', 
+                  borderLeft: '3px solid #fff',
+                  borderBottomLeftRadius: 16
+                }}></div>
+                <div style={{ 
+                  position: 'absolute', 
+                  bottom: 0, 
+                  right: 0, 
+                  width: 50, 
+                  height: 50, 
+                  borderBottom: '3px solid #fff', 
+                  borderRight: '3px solid #fff',
+                  borderBottomRightRadius: 16
+                }}></div>
+
+                {/* Certificate content */}
+                <div style={{ textAlign: 'center', color: '#fff', position: 'relative', zIndex: 2, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <h2 style={{ 
+                      color: '#fff', 
+                      fontSize: 22, 
+                      marginBottom: 8, 
+                      fontFamily: 'serif', 
+                      letterSpacing: 1,
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                      fontWeight: 'bold'
+                    }}>🎉 Certificate of Completion 🎉</h2>
+                    
+                    <div style={{ 
+                      fontSize: 14, 
+                      marginBottom: 6,
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
+                    }}>This certifies that</div>
+                    
+                    <div style={{ 
+                      fontWeight: 700, 
+                      fontSize: 18, 
+                      marginBottom: 6,
+                      color: '#ffd700',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                      textTransform: 'uppercase',
+                      letterSpacing: 1
+                    }}>{userName || '_________'}</div>
+                    
+                    <div style={{ 
+                      fontSize: 13, 
+                      marginBottom: 4,
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
+                    }}>has successfully completed the</div>
+                    
+                    <div style={{ 
+                      fontSize: 14, 
+                      marginBottom: 4,
+                      fontWeight: 'bold',
+                      color: '#ffd700',
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
+                    }}>🎯 Basic Level of 3x3 Cubing 🎯</div>
+                    
+                    <div style={{ 
+                      fontSize: 13, 
+                      marginBottom: 4,
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
+                    }}>with an impressive solve time of</div>
+                    
+                    <div style={{ 
+                      fontSize: 16, 
+                      marginBottom: 6,
+                      fontWeight: 'bold',
+                      color: '#ffd700',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+                    }}>⏱️ {solveTime} seconds ⏱️</div>
+                    
+                    <div style={{ 
+                      fontSize: 11, 
+                      marginBottom: 8,
+                      fontFamily: 'monospace',
+                      backgroundColor: 'rgba(0,0,0,0.2)',
+                      padding: '4px 8px',
+                      borderRadius: 6,
+                      display: 'inline-block'
+                    }}>Scramble: {scramble}</div>
+                  </div>
+                  
+                  <div>
+                    <div style={{ 
+                      fontSize: 24, 
+                      margin: '8px 0',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+                    }}>{Array.from({length: 3}, (_, i) => i < stars ? '⭐' : '☆').join(' ')}</div>
+                    
+                    <div style={{ 
+                      fontSize: 13, 
+                      marginTop: 6,
+                      fontWeight: 'bold',
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
+                    }}>🏆 Organization: <span style={{ color: '#ffd700' }}>cuchco</span> 🏆</div>
+                    
+                    <div style={{ 
+                      fontSize: 10, 
+                      marginTop: 4,
+                      opacity: 0.8,
+                      fontStyle: 'italic'
+                    }}>Certificate ID: {Date.now()}</div>
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
+                <button onClick={() => handleDownload('png')} style={{ background: '#28a745', color: '#fff', border: 'none', borderRadius: 8, padding: '0.5rem 1.5rem', fontSize: 16, fontWeight: 600, cursor: 'pointer' }}>Download as PNG</button>
+                <button onClick={() => handleDownload('jpeg')} style={{ background: '#007bff', color: '#fff', border: 'none', borderRadius: 8, padding: '0.5rem 1.5rem', fontSize: 16, fontWeight: 600, cursor: 'pointer' }}>Download as JPG</button>
+              </div>
+              <button onClick={() => setShowCertificate(false)} style={{ background: '#bbb', color: '#fff', border: 'none', borderRadius: 8, padding: '0.5rem 1.5rem', fontSize: 16, fontWeight: 600, cursor: 'pointer', marginTop: 12 }}>Close</button>
+            </div>
+          </div>
+        )}
+
+        <div style={{ marginTop: 18, color: '#555', fontSize: 16 }}>
+          <b>Star Criteria:</b><br />
+          1 Star: &le; 1:30 (90s)<br />
+          2 Stars: &le; 1:20 (80s)<br />
+          3 Stars: &le; 1:10 (70s)
+        </div>
+      </section>
+    </div>
+  );
+}
+
 const LEVELS = {
   basic: {
     label: 'Basic',
@@ -454,16 +896,7 @@ const LEVELS = {
   },
   intermediate: {
     label: 'Intermediate',
-    content: (
-      <div style={{ textAlign: 'left', maxWidth: 600, margin: '0 auto' }}>
-        <h3>F2L, OLL, PLL</h3>
-        <p>Pair up and insert corners and edges (F2L), orient the last layer (OLL), and permute the last layer (PLL).</p>
-        <ul>
-          <li>Learn intuitive F2L</li>
-          <li>Basic OLL and PLL algorithms</li>
-        </ul>
-      </div>
-    ),
+    content: IntermediateContent,
   },
   advanced: {
     label: 'Advanced',

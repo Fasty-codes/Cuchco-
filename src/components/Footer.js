@@ -35,16 +35,19 @@ const Footer = () => {
             
             {/* Social Media Icons */}
             <div className="social-icons">
-                <a href="https://instagram.com/cuchco" target="_blank" rel="noopener noreferrer" className="social-icon instagram">
+                <a href="https://instagram.com/fasty_codes" target="_blank" rel="noopener noreferrer" className="social-icon instagram">
                     <i className="fab fa-instagram"></i>
                 </a>
                 <a href="https://linkedin.com/company/cuchco" target="_blank" rel="noopener noreferrer" className="social-icon linkedin">
                     <i className="fab fa-linkedin"></i>
                 </a>
-                <a href="https://github.com/cuchco" target="_blank" rel="noopener noreferrer" className="social-icon github">
+                <a href="https://github.com/Fasty-codes" target="_blank" rel="noopener noreferrer" className="social-icon github">
                     <i className="fab fa-github"></i>
                 </a>
-                <a href="https://youtube.com/@cuchco" target="_blank" rel="noopener noreferrer" className="social-icon youtube">
+                <a href="https://youtube.com/@dona_editz_2.0" target="_blank" rel="noopener noreferrer" className="social-icon youtube">
+                    <i className="fab fa-youtube"></i>
+                </a>
+                <a href="https://youtube.com/@cuberA_2.0" target="_blank" rel="noopener noreferrer" className="social-icon youtube">
                     <i className="fab fa-youtube"></i>
                 </a>
             </div>
