@@ -1,8 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Footer.css';
 
 const Footer = () => {
+    const [email, setEmail] = useState('');
+    const [status, setStatus] = useState('idle'); // idle | loading | success | error
+    const [message, setMessage] = useState('');
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setStatus('loading');
+        setMessage('');
+        // Simple email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setStatus('error');
+            setMessage('Please enter a valid email address.');
+            return;
+        }
+        // Simulate API call
+        setTimeout(() => {
+            setStatus('success');
+            setMessage('🎉 You are subscribed! Welcome to the Cuchco newsletter.');
+            setEmail('');
+        }, 1200);
+    };
+
     return (
         <footer className="app-footer">
             <div className="footer-content">
@@ -23,13 +46,30 @@ const Footer = () => {
                 </div>
                 <div className="footer-section contact-form">
                     <h2>Newsletter</h2>
-                    <br />
-                    <form>
-                        <input type="email" name="email" className="text-input contact-input" placeholder="Your email address..." />
-                        <button type="submit" className="btn btn-big contact-btn">
-                            Subscribe
+                    <p style={{ color: '#ccc', marginBottom: 8, fontSize: '1rem' }}>Get the latest updates, tips, and exclusive content. No spam, ever!</p>
+                    <form onSubmit={handleSubmit} style={{ position: 'relative' }}>
+                        <input
+                            type="email"
+                            name="email"
+                            className="text-input contact-input"
+                            placeholder="Your email address..."
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                            disabled={status === 'loading'}
+                            required
+                        />
+                        <button type="submit" className="btn btn-big contact-btn" disabled={status === 'loading' || status === 'success'}>
+                            {status === 'loading' ? (
+                                <span className="newsletter-spinner" style={{ display: 'inline-block', verticalAlign: 'middle', width: 22, height: 22, border: '3px solid #fff', borderTop: '3px solid #4CAF50', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></span>
+                            ) : (
+                                <>
+                                    <i className="fa fa-paper-plane" style={{ marginRight: 8 }}></i>Subscribe
+                                </>
+                            )}
                         </button>
                     </form>
+                    {status === 'success' && <div style={{ color: '#4CAF50', marginTop: 10, fontWeight: 600 }}>{message}</div>}
+                    {status === 'error' && <div style={{ color: '#ff5252', marginTop: 10 }}>{message}</div>}
                 </div>
             </div>
             

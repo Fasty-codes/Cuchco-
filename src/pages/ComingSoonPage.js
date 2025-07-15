@@ -13,15 +13,24 @@ import basicOLLImg from '../assets/images/basic-oll.png';
 import basicPllImg from '../assets/images/basic-pll.png';
 import twolookOLLImg from '../assets/images/2look-oll.png';
 import twolookPllImg from '../assets/images/2look-pll.png';
-import FullF2LImg from '../assets/images/2look-oll.png';
-import FullOLLImg from '../assets/images/2look-oll.png';
-import FullPLLImg from '../assets/images/2look-oll.png';
+import F2LImg1 from '../assets/images/f2l-1.png';
+import F2LImg2 from '../assets/images/f2l-2.png';
+import FullOLLImg1 from '../assets/images/oll-1.png';
+import FullOLLImg2 from '../assets/images/oll-2.png';
+import FullOLLImg3 from '../assets/images/oll-3.png';
+import FullOLLImg4 from '../assets/images/oll-4.png';
+import PLLImg1 from '../assets/images/pll-1.png';
+import PLLImg2 from '../assets/images/pll-2.png';
 
 const LEVELS = [
   {
     key: 'basic',
     label: 'Basic',
     description: 'Start with the fundamentals of 3x3 cubing.',
+    icon: '🎯',
+    difficulty: 'Beginner',
+    color: '#28a745',
+    gradient: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
     content: (
       <div style={{ textAlign: 'left', maxWidth: 600, margin: '0 auto' }}>
         <h3>3x3 Basics</h3>
@@ -37,6 +46,10 @@ const LEVELS = [
     key: 'intermediate',
     label: 'Intermediate',
     description: 'Learn F2L, OLL, and PLL for faster 3x3 solves.',
+    icon: '⚡',
+    difficulty: 'Intermediate',
+    color: '#ffc107',
+    gradient: 'linear-gradient(135deg, #ffc107 0%, #fd7e14 100%)',
     content: (
       <div style={{ textAlign: 'left', maxWidth: 600, margin: '0 auto' }}>
         <h3>F2L, OLL, PLL</h3>
@@ -52,6 +65,10 @@ const LEVELS = [
     key: 'advanced',
     label: 'Advanced',
     description: 'Master full CFOP and advanced speedcubing techniques for 3x3.',
+    icon: '🏆',
+    difficulty: 'Advanced',
+    color: '#dc3545',
+    gradient: 'linear-gradient(135deg, #dc3545 0%, #e83e8c 100%)',
     content: (
       <div style={{ textAlign: 'left', maxWidth: 600, margin: '0 auto' }}>
         <h3>Full CFOP & Speedcubing</h3>
@@ -174,45 +191,140 @@ const ComingSoonPage = ({ title }) => {
               <div
                 key={level.key}
                 style={{
-                  width: 280,
+                  width: 320,
                   background: unlocked ? '#fff' : '#f0f0f0',
-                  border: completed ? '2px solid #28a745' : '2px solid #007bff',
-                  borderRadius: 12,
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                  border: completed ? `3px solid ${level.color}` : `2px solid ${level.color}`,
+                  borderRadius: 20,
+                  boxShadow: unlocked ? '0 8px 32px rgba(0,0,0,0.15)' : '0 2px 8px rgba(0,0,0,0.08)',
                   padding: '2rem 1.5rem',
                   opacity: unlocked ? 1 : 0.6,
                   position: 'relative',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
+                  transition: 'all 0.3s ease',
+                  cursor: unlocked ? 'pointer' : 'not-allowed',
+                  transform: unlocked ? 'translateY(0)' : 'translateY(4px)',
+                  ':hover': unlocked ? {
+                    transform: 'translateY(-8px)',
+                    boxShadow: '0 16px 48px rgba(0,0,0,0.2)'
+                  } : {}
                 }}
+                onClick={() => unlocked && handleStart(level.key)}
               >
-                <h2 style={{ color: '#007bff', fontSize: 28, marginBottom: 12 }}>{level.label}</h2>
-                <p style={{ color: '#555', fontSize: 16, marginBottom: 24 }}>{level.description}</p>
+                {/* Progress indicator */}
                 {completed && (
-                  <span style={{ color: '#28a745', fontWeight: 600, marginBottom: 12 }}>Completed ✓</span>
-                )}
-                <button
-                  onClick={() => handleStart(level.key)}
-                  disabled={!unlocked}
-                  style={{
-                    marginTop: 'auto',
-                    padding: '10px 24px',
-                    fontSize: 18,
-                    borderRadius: 8,
-                    background: unlocked ? '#007bff' : '#ccc',
+                  <div style={{
+                    position: 'absolute',
+                    top: -10,
+                    right: -10,
+                    background: level.gradient,
                     color: '#fff',
-                    border: 'none',
-                    cursor: unlocked ? 'pointer' : 'not-allowed',
+                    borderRadius: '50%',
+                    width: 40,
+                    height: 40,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                    zIndex: 10
+                  }}>
+                    ✓
+                  </div>
+                )}
+                
+                {/* Level icon */}
+                <div style={{
+                  fontSize: 48,
+                  marginBottom: 16,
+                  filter: unlocked ? 'none' : 'grayscale(100%)'
+                }}>
+                  {level.icon}
+                </div>
+                
+                {/* Level title */}
+                <h2 style={{ 
+                  color: level.color, 
+                  fontSize: 32, 
+                  marginBottom: 12, 
+                  fontWeight: 700,
+                  textAlign: 'center'
+                }}>
+                  {level.label}
+                </h2>
+                
+                {/* Difficulty badge */}
+                <div style={{
+                  background: level.gradient,
+                  color: '#fff',
+                  padding: '6px 16px',
+                  borderRadius: 20,
+                  fontSize: 14,
+                  fontWeight: 600,
+                  marginBottom: 16,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                }}>
+                  {level.difficulty}
+                </div>
+                
+                {/* Description */}
+                <p style={{ 
+                  color: '#555', 
+                  fontSize: 16, 
+                  marginBottom: 20, 
+                  textAlign: 'center',
+                  lineHeight: 1.5
+                }}>
+                  {level.description}
+                </p>
+                
+                {/* Status */}
+                {completed ? (
+                  <div style={{
+                    color: level.color,
                     fontWeight: 700,
-                    width: '100%',
-                    transition: 'background 0.2s',
-                  }}
-                >
-                  {completed ? 'Completed (Start Again)' : 'Start'}
-                </button>
-                {!unlocked && (
-                  <span style={{ color: '#888', fontSize: 14, marginTop: 10 }}>Locked</span>
+                    fontSize: 18,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8
+                  }}>
+                    <span style={{ fontSize: 24 }}>🎉</span>
+                    Completed
+                  </div>
+                ) : unlocked ? (
+                  <button
+                    style={{
+                      background: level.gradient,
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 12,
+                      padding: '12px 24px',
+                      fontSize: 16,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                      ':hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 6px 16px rgba(0,0,0,0.3)'
+                      }
+                    }}
+                  >
+                    Start Learning →
+                  </button>
+                ) : (
+                  <div style={{
+                    color: '#888',
+                    fontSize: 16,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8
+                  }}>
+                    <span style={{ fontSize: 20 }}>🔒</span>
+                    Complete previous level
+                  </div>
                 )}
               </div>
             );
@@ -269,13 +381,13 @@ const ComingSoonPage = ({ title }) => {
               <button onClick={() => setActiveAlgSub('Full')} className="clickable-link" style={{ background: 'none', border: 'none', color: '#222', fontSize: 18, fontWeight: 600, cursor: 'pointer', padding: 0, textAlign: 'left' }}>Full</button>
               <ul style={{ listStyle: 'circle', paddingLeft: 24, margin: 0 }}>
                 <li style={{ marginBottom: 8 }}>
-                  <button onClick={() => setActiveAlgSub('Full - F2L')} className="clickable-link" style={{ background: 'none', border: 'none', color: '#222', fontSize: 17, cursor: 'pointer', padding: 0, textAlign: 'left' }}>F2L</button>
+                  <button onClick={() => handleScrollTo(FullF2lRef)} className="clickable-link" style={{ background: 'none', border: 'none', color: '#222', fontSize: 17, cursor: 'pointer', padding: 0, textAlign: 'left' }}>F2L</button>
                 </li>
                 <li style={{ marginBottom: 8 }}>
-                  <button onClick={() => setActiveAlgSub('Full - OLL')} className="clickable-link" style={{ background: 'none', border: 'none', color: '#222', fontSize: 17, cursor: 'pointer', padding: 0, textAlign: 'left' }}>OLL</button>
+                  <button onClick={() => handleScrollTo(FullOLLRef)} className="clickable-link" style={{ background: 'none', border: 'none', color: '#222', fontSize: 17, cursor: 'pointer', padding: 0, textAlign: 'left' }}>OLL</button>
                 </li>
                 <li>
-                  <button onClick={() => setActiveAlgSub('Full - PLL')} className="clickable-link" style={{ background: 'none', border: 'none', color: '#222', fontSize: 17, cursor: 'pointer', padding: 0, textAlign: 'left' }}>PLL</button>
+                  <button onClick={() => handleScrollTo(FullPLLRef)} className="clickable-link" style={{ background: 'none', border: 'none', color: '#222', fontSize: 17, cursor: 'pointer', padding: 0, textAlign: 'left' }}>PLL</button>
                 </li>
               </ul>
             </li>
@@ -372,26 +484,29 @@ const ComingSoonPage = ({ title }) => {
         { /* Full algorithms */}
         <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'left' }}>
           <section ref={FullF2lRef} id="basic-f2l" style={{ marginBottom: 48 }}>
-            <h2 style={{ color: '#007bff', fontSize: 22, marginBottom: 10 }}>Basic F2L</h2>
-            <p>The first two layers (F2L) of the Rubik's Cube are solved simultaneously rather than individually, reducing the solve time considerably.</p>
+            <h2 style={{ color: '#007bff', fontSize: 22, marginBottom: 10 }}>F2L</h2>
+            <p>F2L is the second step in the CFOP method (Cross, F2L, OLL, PLL).It involves simultaneously solving a corner from the first layer and its corresponding edge from the middle layer.The goal is to pair these two pieces in the top layer and then insert them into their correct "F2L slot" between the center pieces.</p>
             <div style={{ textAlign: 'center', margin: '24px 0 32px 0' }}>
-              <img src={basicF2LImg} alt="Basic F2L" style={{ maxWidth: 700, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', marginBottom: 24 }} />
-              <h6 style={{ fontSize: 16, marginBottom: 12, color: '#222', fontWeight: 'normal' }}>i) U R U' R' U' F' U F'</h6>
-              <h6 style={{ fontSize: 16, marginBottom: 12, color: '#222', fontWeight: 'normal' }}>ii) U' L' U L U F U' F' </h6>
+              <img src={F2LImg1} alt="F2L(1)" style={{ maxWidth: 700, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', marginBottom: 24 }} />
+              <img src={F2LImg2} alt="F2L(2)" style={{ maxWidth: 700, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', marginBottom: 24 }} />
             </div>
           </section>
-          <section ref={FullOLLRef} id="basic-oll" style={{ marginBottom: 48 }}>
-            <h2 style={{ color: '#007bff', fontSize: 22, marginBottom: 10 }}>Basic OLL</h2>
-            <p>Basic OLL (Orientation of the Last Layer) algorithms are used in the CFOP (Fridrich) method for solving the Rubik's Cube, specifically to orient the last layer's pieces.</p>
+          <section ref={FullOLLRef} id="oll" style={{ marginBottom: 48 }}>
+            <h2 style={{ color: '#007bff', fontSize: 22, marginBottom: 10 }}>OLL</h2>
+            <p>I made this help sheet for 2 look PLL & OLL a while ago. I ...OLL, or Orientation of the Last Layer, is a step in solving the Rubik's Cube using the CFOP method, where the top layer is oriented correctly. It follows the F2L (first two layers) step, and is then followed by PLL (Permutation of the Last Layer). There are 57 OLL algorithms in total.</p>
             <div style={{ textAlign: 'center', margin: '24px 0 32px 0' }}>
-              <img src={basicOLLImg} alt="Basic OLL" style={{ maxWidth: 700, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }} />
+              <img src={FullOLLImg1} alt="Full OLL(1)" style={{ maxWidth: 700, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }} />
+              <img src={FullOLLImg2} alt="Full OLL(2)" style={{ maxWidth: 700, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }} />
+              <img src={FullOLLImg3} alt="Full OLL(3)" style={{ maxWidth: 700, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }} />
+              <img src={FullOLLImg4} alt="Full OLL(4)" style={{ maxWidth: 700, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }} />
             </div>
           </section>
-          <section ref={FullPLLRef} id="basic-pll" style={{ marginBottom: 48 }}>
-            <h2 style={{ color: '#007bff', fontSize: 22, marginBottom: 10 }}>Basic PLL</h2>
-            <p>Basic PLL (Permutation of the Last Layer) algorithms are used in the CFOP (Fridrich) method for solving the Rubik's Cube, specifically to permute the last layer's pieces.</p>
+          <section ref={FullPLLRef} id="pll" style={{ marginBottom: 48 }}>
+            <h2 style={{ color: '#007bff', fontSize: 22, marginBottom: 10 }}>PLL</h2>
+            <p>After the top layer is oriented (all pieces facing the correct direction, creating a solid colored top face), PLL aims to move the pieces into their correct positions, effectively solving the entire cube.</p>
             <div style={{ textAlign: 'center', margin: '24px 0 32px 0' }}>
-              <img src={basicPllImg} alt="Slice Moves" style={{ maxWidth: 500, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }} />
+              <img src={PLLImg1} alt="Pll(1)" style={{ maxWidth: 500, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }} />
+              <img src={PLLImg2} alt="Pll(2)" style={{ maxWidth: 500, width: '100%', height: 'auto', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }} />
             </div>
           </section>
         </div>

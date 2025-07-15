@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../utils/supabaseClient';
-import { FaTrophy, FaMedal, FaAward, FaCrown, FaStar, FaCamera, FaVideo } from 'react-icons/fa';
+import { FaTrophy, FaMedal, FaAward, FaCrown, FaStar, FaCamera, FaVideo, FaTrash } from 'react-icons/fa';
 
 const avatars = [
   'https://api.dicebear.com/7.x/pixel-art/svg?seed=Steve',
@@ -54,9 +54,48 @@ const LeaderboardPage = () => {
   });
   const [mediaUrl, setMediaUrl] = useState('');
   const [feedback, setFeedback] = useState('');
+  const [mediaModal, setMediaModal] = useState({ open: false, type: '', url: '' });
+  const [showLocalOnly, setShowLocalOnly] = useState(false);
+
+  // Helper: localStorage key
+  const LOCAL_KEY = 'localLeaderboardRecords';
+
+  // Helper: Save to localStorage
+  const saveToLocal = (record) => {
+    const local = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]');
+    local.unshift(record);
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(local));
+  };
+
+  // Helper: Get all local records
+  const getLocalRecords = () => {
+    return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]');
+  };
+
+  // Helper: Remove all local records (after sync)
+  const clearLocalRecords = () => {
+    localStorage.removeItem(LOCAL_KEY);
+  };
+
+  // Try to sync local records to Supabase
+  const syncLocalToSupabase = async () => {
+    const localRecords = getLocalRecords();
+    if (!localRecords.length) return;
+    for (const rec of localRecords) {
+      try {
+        // Only send allowed fields (do NOT send total_ms)
+        const { name, avatar, region, cubeType, min, sec, ms, image, video } = rec;
+        await supabase.from('leaderboard').insert([
+          { name, avatar, region, cubeType, min, sec, ms, image, video }
+        ]);
+      } catch {}
+    }
+    clearLocalRecords();
+  };
 
   useEffect(() => {
     fetchRecords();
+    syncLocalToSupabase();
     // eslint-disable-next-line
   }, []);
 
@@ -67,17 +106,22 @@ const LeaderboardPage = () => {
         .from('leaderboard')
         .select('*')
         .order('created_at', { ascending: false });
-      
+      const local = getLocalRecords();
+      let merged = [];
       if (error) {
-        console.error('Error fetching records:', error);
-        setFeedback('❌ Error loading leaderboard data');
+        merged = local;
+        setFeedback('⚠️ Showing local records (Supabase unavailable)');
       } else if (data) {
-        setRecords(data);
+        // Merge local and Supabase records, avoiding duplicates by id (prefer Supabase)
+        const supabaseIds = new Set(data.map(r => r.id));
+        merged = [...data, ...local.filter(r => !supabaseIds.has(r.id))];
         setFeedback('');
       }
+      setRecords(merged);
     } catch (err) {
-      console.error('Fetch error:', err);
-      setFeedback('❌ Error loading leaderboard data');
+      const local = getLocalRecords();
+      setRecords(local);
+      setFeedback('⚠️ Showing local records (Supabase unavailable)');
     } finally {
       setLoading(false);
     }
@@ -105,41 +149,59 @@ const LeaderboardPage = () => {
       setFeedback('Please enter a record time.');
       return;
     }
-    
     setLoading(true);
     setFeedback('');
-
+    const newRecord = {
+      name: user?.username || form.name,
+      avatar: user?.avatar || form.avatar,
+      region: user?.region || form.region,
+      cubeType: form.cubeType,
+      min: parseInt(form.record.min) || 0,
+      sec: parseInt(form.record.sec) || 0,
+      ms: parseInt(form.record.ms) || 0,
+      image: form.mediaType && form.mediaType.startsWith('image') ? mediaUrl : '',
+      video: form.mediaType && form.mediaType.startsWith('video') ? mediaUrl : '',
+      total_ms: getTimeInMs(form.record),
+      created_at: new Date().toISOString(),
+      id: Date.now()
+    };
     try {
-      // Insert into Supabase
-      const { data, error } = await supabase.from('leaderboard').insert([
+      const { error } = await supabase.from('leaderboard').insert([
         {
-          name: user?.username || form.name,
-          avatar: user?.avatar || form.avatar,
-          region: user?.region || form.region,
-          cubeType: form.cubeType,
-          min: parseInt(form.record.min) || 0,
-          sec: parseInt(form.record.sec) || 0,
-          ms: parseInt(form.record.ms) || 0,
-          image: form.mediaType && form.mediaType.startsWith('image') ? mediaUrl : '',
-          video: form.mediaType && form.mediaType.startsWith('video') ? mediaUrl : '',
-          total_ms: getTimeInMs(form.record)
+          name: newRecord.name,
+          avatar: newRecord.avatar,
+          region: newRecord.region,
+          cubeType: newRecord.cubeType,
+          min: newRecord.min,
+          sec: newRecord.sec,
+          ms: newRecord.ms,
+          image: newRecord.image,
+          video: newRecord.video
         }
       ]);
-
+      // Always save to localStorage (avoid duplicates)
+      const local = getLocalRecords();
+      if (!local.some(r => r.id === newRecord.id)) {
+        saveToLocal(newRecord);
+      }
       if (error) {
-        console.error('Supabase error:', error);
-        setFeedback('Error posting record: ' + error.message);
+        setFeedback('Record saved locally (Supabase unavailable)');
+        fetchRecords();
       } else {
         setFeedback('Record posted successfully!');
         fetchRecords();
       }
     } catch (err) {
-      console.error('Submit error:', err);
-      setFeedback('Error posting record');
+      // Always save to localStorage (avoid duplicates)
+      const local = getLocalRecords();
+      if (!local.some(r => r.id === newRecord.id)) {
+        saveToLocal(newRecord);
+      }
+      setFeedback('Record saved locally (Supabase unavailable)');
+      fetchRecords();
     } finally {
       setLoading(false);
     }
-
     setForm({
       name: user?.username || '',
       avatar: user?.avatar || avatars[5],
@@ -155,16 +217,100 @@ const LeaderboardPage = () => {
     setTimeout(() => setFeedback(''), 3000);
   };
 
+  // Delete a record by id (from Supabase and localStorage)
+  const handleDeleteRecord = async (record) => {
+    if (!window.confirm('Are you sure you want to delete this record?')) return;
+    setLoading(true);
+    let deleted = false;
+    // Try to delete from Supabase if id exists and is a number (Supabase id)
+    if (record.id && typeof record.id === 'number') {
+      try {
+        const { error } = await supabase.from('leaderboard').delete().eq('id', record.id);
+        if (!error) deleted = true;
+      } catch {}
+    }
+    // Always delete from localStorage
+    const local = getLocalRecords();
+    const filtered = local.filter(r => r.id !== record.id);
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(filtered));
+    setFeedback('Record deleted.');
+    fetchRecords();
+    setLoading(false);
+  };
+
   const filtered = records.filter(
     r => (region === 'All' || r.region === region) && r.cubeType === cubeType
-  ).sort((a, b) => {
-    const timeA = getTimeInMs(a);
-    const timeB = getTimeInMs(b);
-    return timeA - timeB; // Sort by fastest time first
-  });
+  );
 
   return (
     <div style={{ minHeight: '100vh', padding: '2rem 0', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      {/* Media Modal */}
+      {mediaModal.open && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0,0,0,0.85)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onClick={() => setMediaModal({ open: false, type: '', url: '' })}
+        >
+          <div
+            style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setMediaModal({ open: false, type: '', url: '' })}
+              style={{
+                position: 'absolute',
+                top: -40,
+                right: 0,
+                background: 'transparent',
+                border: 'none',
+                color: '#fff',
+                fontSize: 32,
+                cursor: 'pointer',
+                zIndex: 10000,
+              }}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            {mediaModal.type === 'image' ? (
+              <img
+                src={mediaModal.url}
+                alt="media-fullscreen"
+                style={{ maxWidth: '90vw', maxHeight: '90vh', borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}
+              />
+            ) : (
+              <video
+                src={mediaModal.url}
+                controls
+                autoPlay
+                style={{ maxWidth: '90vw', maxHeight: '90vh', borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}
+              />
+            )}
+          </div>
+        </div>
+      )}
+      {/* Toggle for local only / merged view */}
+      <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
+        <label style={{ fontWeight: 600, fontSize: 16 }}>
+          <input
+            type="checkbox"
+            checked={showLocalOnly}
+            onChange={e => setShowLocalOnly(e.target.checked)}
+            style={{ marginRight: 8 }}
+          />
+          Show only local records
+        </label>
+      </div>
       <h1 style={{ color: '#333', fontSize: 48, marginBottom: 24, fontWeight: 700 }}>🏆 Leaderboard</h1>
       
       <div style={{ width: '100%', maxWidth: 800, marginBottom: 32 }}>
@@ -355,10 +501,10 @@ const LeaderboardPage = () => {
                 borderRadius: 8
               }}>❌ {feedback}</td></tr>
             )}
-            {!loading && !feedback.includes('Error') && filtered.length === 0 && (
+            {!loading && !feedback.includes('Error') && (showLocalOnly ? getLocalRecords() : filtered).length === 0 && (
               <tr><td colSpan={7} style={{ color: '#888', textAlign: 'center', fontSize: 18, padding: '2rem' }}>No records yet for this category.</td></tr>
             )}
-            {filtered.map((r, i) => (
+            {(showLocalOnly ? getLocalRecords() : filtered).map((r, i) => (
               <tr key={r.id || i} style={{ 
                 borderBottom: '1px solid #eee',
                 background: i % 2 === 0 ? '#fff' : '#f8f9fa'
@@ -395,18 +541,59 @@ const LeaderboardPage = () => {
                 </td>
                 <td style={{ padding: 16 }}>
                   {r.image && (
-                    <img src={r.image} alt="media" style={{ 
-                      maxWidth: 60, 
-                      borderRadius: 8,
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                    }} />
+                    <img
+                      src={r.image}
+                      alt="media"
+                      style={{
+                        maxWidth: 60,
+                        borderRadius: 8,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                        cursor: 'pointer',
+                        transition: 'transform 0.2s',
+                      }}
+                      onClick={() => setMediaModal({ open: true, type: 'image', url: r.image })}
+                    />
                   )}
                   {r.video && (
-                    <video src={r.video} controls style={{ 
-                      maxWidth: 80, 
-                      borderRadius: 8,
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                    }} />
+                    <video
+                      src={r.video}
+                      controls
+                      style={{
+                        maxWidth: 80,
+                        borderRadius: 8,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                        cursor: 'pointer',
+                        transition: 'transform 0.2s',
+                      }}
+                      onClick={e => {
+                        e.preventDefault();
+                        setMediaModal({ open: true, type: 'video', url: r.video });
+                      }}
+                    />
+                  )}
+                  {/* Delete icon for record owner */}
+                  {user && r.name === user.username && (
+                    <button
+                      onClick={() => handleDeleteRecord(r)}
+                      style={{
+                        marginLeft: 8,
+                        background: 'transparent',
+                        color: '#dc3545',
+                        border: 'none',
+                        borderRadius: 6,
+                        padding: 4,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        fontSize: 18,
+                        verticalAlign: 'middle',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                      title="Delete this record"
+                    >
+                      <FaTrash />
+                    </button>
                   )}
                 </td>
               </tr>

@@ -24,6 +24,7 @@ import AISidebar from './components/AISidebar';
 import './components/AISidebar.css';
 import ComingSoonPage from './pages/ComingSoonPage';
 import ThreeByThreeLevelPage from './pages/ThreeByThreeLevelPage';
+import ChessSimPage from './pages/ChessSimPage';
 
 function App() {
   const [aiOpen, setAiOpen] = React.useState(false);
@@ -47,6 +48,7 @@ function App() {
               <Route path="/learn/cubing/3x3/:level" element={<ProtectedRoute><ThreeByThreeLevelPage /></ProtectedRoute>} />
               <Route path="/learn/coding" element={<ProtectedRoute><CodingLearnPage /></ProtectedRoute>} />
               <Route path="/learn/chess" element={<ProtectedRoute><ChessLearnPage /></ProtectedRoute>} />
+              <Route path="/play-chess" element={<ProtectedRoute><ChessSimPage /></ProtectedRoute>} />
               <Route 
                 path="/community" 
                 element={
@@ -72,7 +74,7 @@ function App() {
                 } 
               />
               <Route path="/leaderboard" element={<LeaderboardPage />} />
-              <Route path="/3x3solver" element={<ProtectedRoute><Solver3x3Page /></ProtectedRoute>} />
+              <Route path="/solver-3x3" element={<ProtectedRoute><Solver3x3Page /></ProtectedRoute>} />
               <Route path="/timer" element={<ProtectedRoute><TimerPage /></ProtectedRoute>} />
               <Route path="/scramble-gen" element={<ProtectedRoute><ScrambleGenPage /></ProtectedRoute>} />
               {/* Add other routes like Timer, etc. later */}

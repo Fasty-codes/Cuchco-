@@ -164,7 +164,7 @@ const HomePage = () => {
                     </div>
                     <div className="testimonial-card">
                         <div className="testimonial-content">
-                            <p>"Cuchco's coding challenges helped me land my dream job as a software engineer."</p>
+                            <p>"Cuchco's coding challenges helped me land my dream job as a Frontend Developer."</p>
                         </div>
                         <div className="testimonial-author">
                             <div className="author-avatar"><i className="fa fa-code" aria-hidden="true"></i></div>

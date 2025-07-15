@@ -138,4 +138,16 @@
     padding: 1rem 0;
     border-top: 1px solid #555;
     margin-top: 2rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.footer-section.contact-form .newsletter-success,
+.footer-section.contact-form .newsletter-error {
+  margin-top: 12px;
+  font-size: 1.05rem;
+  font-weight: 500;
 } 
