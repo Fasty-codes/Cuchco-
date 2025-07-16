@@ -25,6 +25,7 @@ import './components/AISidebar.css';
 import ComingSoonPage from './pages/ComingSoonPage';
 import ThreeByThreeLevelPage from './pages/ThreeByThreeLevelPage';
 import ChessSimPage from './pages/ChessSimPage';
+import AboutPage from './pages/AboutPage';
 
 function App() {
   const [aiOpen, setAiOpen] = React.useState(false);
@@ -77,6 +78,7 @@ function App() {
               <Route path="/solver-3x3" element={<ProtectedRoute><Solver3x3Page /></ProtectedRoute>} />
               <Route path="/timer" element={<ProtectedRoute><TimerPage /></ProtectedRoute>} />
               <Route path="/scramble-gen" element={<ProtectedRoute><ScrambleGenPage /></ProtectedRoute>} />
+              <Route path="/about" element={<AboutPage />} />
               {/* Add other routes like Timer, etc. later */}
             </Routes>
           </main>

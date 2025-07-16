@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Chess } from 'chess.js';
 import { useAuth } from '../context/AuthContext';
 import './ChessSimPage.css'; // For custom animations and styles
+import { useNavigate } from 'react-router-dom';
 
 const PIECE_UNICODE = {
   p: '♟', n: '♞', b: '♝', r: '♜', q: '♛', k: '♚',
@@ -105,6 +106,7 @@ const ChessSimPage = () => {
   const timerRef = useRef();
   const [pendingSetup, setPendingSetup] = useState({ color: 'w', bot: 'beginner' });
   const [gameStarted, setGameStarted] = useState(false);
+  const navigate = useNavigate();
 
   // Board orientation: flip for black
   const getDisplayBoard = () => {
@@ -239,6 +241,10 @@ const ChessSimPage = () => {
     setActiveTimer('user');
   };
 
+  const handleExit = () => {
+    navigate('/');
+  };
+
   // Function to download moves as PGN
   const handleDownloadPGN = () => {
     const pgn = game.pgn();
@@ -288,7 +294,10 @@ const ChessSimPage = () => {
                 </button>
               ))}
             </div>
-            <button onClick={handleStartGame} style={{marginTop:12, padding:'14px 38px', fontSize:22, borderRadius:10, background:'#007bff', color:'#fff', border:'none', fontWeight:700, cursor:'pointer'}}>Start</button>
+            <div style={{ display:'flex', flexDirection:'row', justifyContent:'center', gap:18, marginTop:18 }}>
+              <button onClick={handleStartGame} style={{padding:'14px 38px', fontSize:22, borderRadius:10, background:'#007bff', color:'#fff', border:'none', fontWeight:700, cursor:'pointer'}}>Start</button>
+              <button onClick={handleExit} style={{padding:'14px 38px', fontSize:22, borderRadius:10, background:'#eee', color:'#222', border:'2px solid #007bff', fontWeight:700, cursor:'pointer'}}>Exit</button>
+            </div>
           </div>
         </div>
       )}
