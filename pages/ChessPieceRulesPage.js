@@ -1,0 +1,9 @@
+import React from 'react';
+// ... imports from ChessLearnPage.js as needed ...
+// ... all PIECE_META, PIECES, GENERAL_RULES, diagrams, and rendering logic from the old ChessLearnPage.js ...
+
+const ChessPieceRulesPage = () => (
+  // ... the full JSX previously in ChessLearnPage ...
+);
+
+export default ChessPieceRulesPage; 

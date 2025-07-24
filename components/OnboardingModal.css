@@ -1,0 +1,97 @@
+.onboarding-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.onboarding-modal {
+    background: #fff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    animation: fadeInScaleUp 0.5s ease-out;
+}
+
+.onboarding-modal h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.onboarding-modal p {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #555;
+}
+
+.onboarding-section {
+    margin-bottom: 2rem;
+}
+
+.onboarding-section h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.avatar-option {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.avatar-option:hover {
+    transform: scale(1.1);
+}
+
+.avatar-option.selected {
+    border-color: #4CAF50;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.region-select {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+}
+
+.onboarding-complete-btn {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 1rem;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.onboarding-complete-btn:hover {
+    background-color: #45a049;
+} 
