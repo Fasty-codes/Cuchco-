@@ -1,0 +1,243 @@
+.learn-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.learn-container {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+}
+
+.learn-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.learn-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.learn-link {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 15px;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.learn-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.learn-link:hover::before {
+    transform: scaleX(1);
+}
+
+.learn-link:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-color: #667eea;
+}
+
+.learn-link.cubing::before {
+    background: linear-gradient(90deg, #FF6B35, #F7931E);
+}
+
+.learn-link.coding::before {
+    background: linear-gradient(90deg, #2E86AB, #A23B72);
+}
+
+.learn-link.chess::before {
+    background: linear-gradient(90deg, #8B4513, #D2691E);
+}
+
+.learn-link.cubing:hover {
+    border-color: #FF6B35;
+}
+
+.learn-link.coding:hover {
+    border-color: #2E86AB;
+}
+
+.learn-link.chess:hover {
+    border-color: #8B4513;
+}
+
+.link-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    margin-right: 1.5rem;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.learn-link.cubing .link-icon {
+    background: linear-gradient(135deg, #FF6B35, #F7931E);
+}
+
+.learn-link.coding .link-icon {
+    background: linear-gradient(135deg, #2E86AB, #A23B72);
+}
+
+.learn-link.chess .link-icon {
+    background: linear-gradient(135deg, #8B4513, #D2691E);
+}
+
+.learn-link:hover .link-icon {
+    transform: scale(1.1);
+}
+
+.link-content {
+    flex: 1;
+    text-align: left;
+}
+
+.link-content h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.link-content p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.learn-link .fa-arrow-right {
+    color: #667eea;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.learn-link:hover .fa-arrow-right {
+    transform: translateX(5px);
+}
+
+.learn-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f0f0f0;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #667eea;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .learn-page {
+        padding: 1rem;
+    }
+
+    .learn-container {
+        padding: 2rem;
+    }
+
+    .learn-title {
+        font-size: 2.5rem;
+    }
+
+    .learn-link {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .link-icon {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+
+    .link-content {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .learn-stats {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .learn-title {
+        font-size: 2rem;
+    }
+
+    .learn-container {
+        padding: 1.5rem;
+    }
+
+    .link-content h3 {
+        font-size: 1.3rem;
+    }
+
+    .link-content p {
+        font-size: 0.9rem;
+    }
+} 
