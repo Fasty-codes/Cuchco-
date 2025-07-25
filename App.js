@@ -37,6 +37,7 @@ import HowToSolvePyraminxPage from './pages/HowToSolvePyraminxPage';
 import StoryAIPage from './pages/StoryAIPage';
 import PoemGenPage from './pages/PoemGenPage';
 import FunZonePage from './pages/FunZonePage';
+import StoryPage from './pages/StoryPage';
 
 function App() {
   const [aiOpen, setAiOpen] = React.useState(false);
@@ -68,6 +69,7 @@ function App() {
               <Route path="/play-chess" element={<ProtectedRoute><ChessSimPage /></ProtectedRoute>} />
               <Route path="/poem-gen" element={<PoemGenPage />} />
               <Route path="/fun-zone" element={<FunZonePage />} />
+              <Route path="/story" element={<ProtectedRoute><StoryPage /></ProtectedRoute>} />
               <Route 
                 path="/community" 
                 element={
