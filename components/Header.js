@@ -266,6 +266,12 @@ const Header = () => {
                 desc: 'Generate creative poems with AI.',
                 to: '/poem-gen',
             },
+            {
+                label: 'Story',
+                icon: <FaFeather style={{ color: '#0288d1', fontSize: 28, marginRight: 12 }} />,
+                desc: 'Hear and Read creative stories made from the team.',
+                to: '/story',
+            },
         ],
     };
 
@@ -489,6 +495,7 @@ const Header = () => {
                                     <Link to="/play-chess" onClick={() => { setMobileSubNav(null); handleNavClose(); }} style={mobileNavItemStyle}><FaChess style={{ color: '#a020f0', fontSize: 22, marginRight: 10 }} />Chess Sim</Link>
                                     <Link to="/story-ai" onClick={() => { setMobileSubNav(null); handleNavClose(); }} style={mobileNavItemStyle}><FaMagic style={{ color: '#ff69b4', fontSize: 22, marginRight: 10 }} />Storywriting AI</Link>
                                     <Link to="/poem-gen" onClick={() => { setMobileSubNav(null); handleNavClose(); }} style={mobileNavItemStyle}><FaFeather style={{ color: '#0288d1', fontSize: 22, marginRight: 10 }} />Poem Generator</Link>
+                                    <Link to="/story" onClick={() => { setMobileSubNav(null); handleNavClose(); }} style={mobileNavItemStyle}><FaBook style={{ color: '#0288d1', fontSize: 22, marginRight: 10 }} />Story</Link>
                                 </div>
                             ) : (
                                 <button
@@ -559,6 +566,7 @@ const Header = () => {
                                                 <Link to="/timer" onClick={() => { setOpenMega(null); handleNavClose(); }} style={navLinkStyle}><FaFlagCheckered style={{ color: '#a020f0', fontSize: 22, marginRight: 10 }} />Timer</Link>
                                                 <Link to="/story-ai" onClick={() => { setOpenMega(null); handleNavClose(); }} style={navLinkStyle}><FaMagic style={{ color: '#ff69b4', fontSize: 22, marginRight: 10 }} />Storywriting AI</Link>
                                                 <Link to="/poem-gen" onClick={() => { setOpenMega(null); handleNavClose(); }} style={navLinkStyle}><FaFeather style={{ color: '#0288d1', fontSize: 22, marginRight: 10 }} />Poem Generator</Link>
+                                                <Link to="/story" onClick={() => { setOpenMega(null); handleNavClose(); }} style={navLinkStyle}><FaBook style={{ color: '#0288d1', fontSize: 22, marginRight: 10 }} />Stories</Link>
                                             </div>
                                         </div>
                                     </div>
